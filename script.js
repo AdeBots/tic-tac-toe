@@ -57,31 +57,44 @@ const players = (() => {
 })();
 
 const displayController= (() => {
+    const boardElement = document.createElement(div);
+    const resultElement = document.createElement(div);
+    const restartButton= document.createElement(div);
+    const board = gameboard.getBoard();
+
+    const handleMove = (row, column) => {
+        if (board[row][column] === "") {
+            gameboard.inputValue(row, column, currentPlayer);
+            const gameResult = gameboard.checkWin();
+            if (gameResult) {
+                resultElement.textContent = gameResult === "Draw" ? "It's a draw!" : `${gameResult} wins!`;
+                boardElement.removeEventListener('click', handleMove);
+            } else {
+                currentPlayer = currentPlayer === players.playerOneToken ? players.playerTwoToken : players.playerOneToken;
+                renderBoard();
+            }
+        }
+    };
+
     const renderBoard = () => {
-        const board = gameboard.getBoard();
-        console.clear();
+        board.innerHTML = '';
+        board.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', () => handleMove(rowIndex, columnIndex));
+                boardElement.appendChild(cellElement);
+            })
+        })
     };
 
     const playGame = () => {
         players.getPlayerNames();
-        let currentPlayer = players.playerOneToken;
-        let gameResult = null;
-
-        while (!gameResult) {
-            renderBoard();
-            const row = parseInt(prompt(`${currentPlayer}'s turn. Pick your row (0, 1, or 2):`));
-            const column = parseInt(prompt(`${currentPlayer}'s turn. Pick your column (0, 1, or 2):`));
-            gameboard.inputValue(row, column, currentPlayer);
-            gameResult = gameboard.checkWin();
-            currentPlayer = currentPlayer === players.playerOneToken ? players.playerTwoToken : players.playerOneToken;
-        }
-
+        currentPlayer = players.playerOneToken;
+        board.forEach(row => row.fill(""));
+        resultElement.textContent = '';
         renderBoard();
-        if (gameResult === "Draw") {
-            console.log("It's a draw!");
-        } else {
-            console.log(`${gameResult} wins!`);
-        }
     };
 
     return { playGame };
