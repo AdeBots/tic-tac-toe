@@ -9,7 +9,7 @@ const gameboard = (() => {
             board[row][column] = player;
         }  
         else {
-            console.log("Cell occupied")
+            alert("Cell occupied!")
         }
     };
 
@@ -26,16 +26,13 @@ const gameboard = (() => {
         ];
         for (const combination of winningCombinations) {
             if(combination.every(cell => cell === "X")){
-                console.log("X Wins");
                 return "X";
             }
             if(combination.every(cell => cell === "O")){
-                console.log("O Wins");
                 return "O";
             }
         }
         if (board.flat().every(cell => cell !== "")){
-            console.log("draw");
             return "Draw";
         }
         return null;
@@ -47,32 +44,37 @@ const gameboard = (() => {
 const players = (() => {
     let playerOneName;
     let playerTwoName;
+    const playerOne = document.querySelector(".player1");
+    const playerTwo = document.querySelector(".player2");
     const playerOneToken = "X";
     const playerTwoToken = "O"; 
 
     const getPlayerNames = () => {
         playerOneName =prompt("Input the first player's name");
         playerTwoName =prompt("Input the second player's name");
+        playerOne.textContent = playerOneName + " is X";
+        playerTwo.textContent = playerTwoName + " is O";
     }
     return { getPlayerNames, playerOneToken, playerTwoToken };
 })();
 
 const displayController= (() => {
     const boardElement = document.querySelector("#board");
-    const resultElement = document.getElementById("#result");
-    const restartButton = document.getElementById("#restart");
+    const resultElement = document.querySelector("#result");
+    const restartButton = document.querySelector("#restart");
     const board = gameboard.getBoard();
+    let currentPlayer;
 
     const handleMove = (row, column) => {
         if (board[row][column] === "") {
             gameboard.inputValue(row, column, currentPlayer);
+            renderBoard();
             const gameResult = gameboard.checkWin();
             if (gameResult) {
                 resultElement.textContent = gameResult === "Draw" ? "It's a draw!" : `${gameResult} wins!`;
-                boardElement.removeEventListener('click', handleMove);
+                boardElement.querySelectorAll('.cell').forEach(cell => cell.replaceWith(cell.cloneNode(true)));
             } else {
                 currentPlayer = currentPlayer === players.playerOneToken ? players.playerTwoToken : players.playerOneToken;
-                renderBoard();
             }
         }
     };
@@ -86,22 +88,25 @@ const displayController= (() => {
                 cellElement.textContent = cell;
                 cellElement.addEventListener('click', () => handleMove(rowIndex, columnIndex));
                 boardElement.appendChild(cellElement);
-            })
-        })
+            });
+        });
     };
 
     const playGame = () => {
         players.getPlayerNames();
         currentPlayer = players.playerOneToken;
         board.forEach(row => row.fill(""));
-        resultElement.textContent = '';
+        resultElement.textContent = "";
         renderBoard();
     };
 
     restartButton.addEventListener('click', playGame);
-    
+
     return { playGame };
 
 })();
 
-displayController.playGame();
+
+
+ displayController.playGame()
+
