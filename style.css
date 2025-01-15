@@ -14,11 +14,16 @@ body {
     align-items: center;
 }
 
+.playerNames {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
 .board {
     display: grid;
     width: 250px;
     height: 250px;
-    gap: 5px;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
