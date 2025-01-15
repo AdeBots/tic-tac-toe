@@ -40,6 +40,7 @@ const gameboard = (() => {
         }
         return null;
     };
+
     return { getBoard, inputValue, checkWin };
 })();
 
@@ -57,9 +58,9 @@ const players = (() => {
 })();
 
 const displayController= (() => {
-    const boardElement = document.createElement(div);
-    const resultElement = document.createElement(div);
-    const restartButton= document.createElement(div);
+    const boardElement = document.querySelector("#board");
+    const resultElement = document.getElementById("#result");
+    const restartButton = document.getElementById("#restart");
     const board = gameboard.getBoard();
 
     const handleMove = (row, column) => {
@@ -77,7 +78,7 @@ const displayController= (() => {
     };
 
     const renderBoard = () => {
-        board.innerHTML = '';
+        boardElement.innerHTML = '';
         board.forEach((row, rowIndex) => {
             row.forEach((cell, columnIndex) => {
                 const cellElement = document.createElement('div');
@@ -97,6 +98,8 @@ const displayController= (() => {
         renderBoard();
     };
 
+    restartButton.addEventListener('click', playGame);
+    
     return { playGame };
 
 })();
